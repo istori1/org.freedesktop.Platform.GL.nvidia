@@ -45,18 +45,8 @@ for VER in ${DRIVER_VERSIONS}; do
         if [ ${ARCH} == aarch64 ]; then
             if [ ${MAJOR_VER} -lt 470 ]; then
                 continue
-            elif [[ ${TESLA_VERSIONS} == *${VER}* ]]; then
+            elif [[ ${TESLA_VERSIONS} == *${VER}* ]] || [[ ${VULKAN_VERSIONS} == *${VER}* ]]; then
                 continue
-            elif [[ ${VULKAN_VERSIONS} == *${VER}* ]]; then
-                continue
-            else
-                if [ ${VER} == 510.39.01 ]; then
-                    continue
-                elif [ ${VER} == 495.46 ]; then
-                    continue
-                elif [ ${VER} == 470.94 ]; then
-                    continue
-                fi
             fi
         fi
 
@@ -87,10 +77,13 @@ for VER in ${DRIVER_VERSIONS}; do
         else
             URL=https://us.download.nvidia.com/XFree86/Linux-${NVIDIA_ARCH}/${VER}/NVIDIA-Linux-${NVIDIA_ARCH}-${VER}${SUFFIX}.run
             if ! curl -f -o dl ${URL}; then
-                URL=https://download.nvidia.com/XFree86/Linux-${NVIDIA_ARCH}/${VER}/NVIDIA-Linux-${NVIDIA_ARCH}-${VER}${SUFFIX}.run
+                URL=https://us.download.nvidia.com/XFree86/${NVIDIA_ARCH}/${VER}/NVIDIA-Linux-${NVIDIA_ARCH}-${VER}${SUFFIX}.run
                 if ! curl -f -o dl ${URL}; then
-                    echo "Unable to find URL for version ${VER}, arch ${ARCH}"
-                    exit 1
+                    URL=https://download.nvidia.com/XFree86/Linux-${NVIDIA_ARCH}/${VER}/NVIDIA-Linux-${NVIDIA_ARCH}-${VER}${SUFFIX}.run
+                    if ! curl -f -o dl ${URL}; then
+                        echo "Unable to find URL for version ${VER}, arch ${ARCH}"
+                        exit 1
+                    fi
                 fi
             fi
         fi
